@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block title %}
+Login
+{% endblock title %}
+
+{% block nav %}
+{% include "nav.html" %}
+{% endblock nav %}
+
+{% block content %}
+<main>
+    <form class="from mx-5 my-2 p-2" method="post" action="{% url 'accounts:login_view' %}" class="text-center form">
+        {% csrf_token %}
+        <p>
+            <input class="form-control" style="width: 15rem;" type="email" placeholder="example@mail.com" required
+                name="username">
+        </p>
+        <p>
+            <input class="form-control" style="width: 15rem;" type="password" name="password" placeholder="Password"
+                required>
+        </p>
+        <p>
+            Forgot password? click <a href="{% url 'password_reset' %}">here</a>
+        </p>
+        <br>
+        <input class="btn btn-primary btn-sm" type="submit" value="Login">
+    </form>
+</main>
+{% endblock content %}

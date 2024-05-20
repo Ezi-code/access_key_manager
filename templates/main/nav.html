@@ -1,0 +1,14 @@
+<nav>
+  <ul class="nav justify-content-center">
+    <li class="nav-item">
+      <a class="nav-link" href="{% url 'main:home' %}">Home</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" href="{% url 'accounts:logout_view' %}">Logout</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" href="/" style="color: rgb(30, 29, 29);">{{request.user}}</a>
+    </li>
+  </ul>
+</nav>
+<hr>

@@ -1,0 +1,19 @@
+<nav>
+  <ul class="nav justify-content-center">
+
+    {% if request.user.is_authenticated %}
+    <li class="nav-item">
+      <a class="nav-link" href="{% url 'accounts:logout_view' %}">Logout</a>
+    </li>
+    {% else %}
+    <li class="nav-item">
+      <a class="nav-link active" aria-current="page" href="{% url 'accounts:register_view' %}">Register</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" href="{% url 'accounts:login_view' %}">Login</a>
+    </li>
+    {% endif %}
+
+  </ul>
+</nav>
+<hr>

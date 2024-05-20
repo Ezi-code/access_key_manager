@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block title %}
+Request Key
+{% endblock title %}
+
+{% block nav %}
+{% include "main/nav.html" %}
+{% endblock nav %}
+
+{% block content %}
+<main>
+    <form class="form text-center m-5" action="{% url 'main:request_key' user.id %}" method="post">
+        {% csrf_token %}
+        <p>
+            Please enter the key token sent to your email ({{user.email}}) to generate a new Access Key.
+        </p>
+        <p>
+            <input type="text" name="token" placeholder="Email" autocomplete="on" required class="form-control m">
+        </p>
+        <input type="submit" value="Request Key" class="btn btn-primary btn-sm">
+    </form>
+</main>
+{% endblock content %}

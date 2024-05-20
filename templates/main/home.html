@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block title %}
+Home
+{% endblock title %}
+
+{% block nav %}
+{% include "main/nav.html" %}
+{% endblock nav %}
+
+{% block content %}
+<main>
+    {% if request.user.is_authenticated %}
+    <main>
+        <div class="card mx-5 my-3">
+            <div class="card-header" style="color: green;">
+                Active keys
+            </div>
+            <div class="card-body p-2 m-2">
+                {% for key in active_keys %}
+                <p class="card-text">{{key.key}}</p>
+                <p class="card-text blockquote-footer">{{key.created_at}} | {{key.expiry_date}}</p>
+                {% empty %}
+                <a href="{% url 'main:request_key' request.user.id %}" class="btn btn-primary btn-sm">Request
+                    key</a>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="card mx-5 my-3">
+            <div class="card-header" style="color: rgb(173, 114, 4);">
+                Revoked keys
+            </div>
+            <div class="card-body p-2 m-2">
+                {% for key in revoked_keys %}
+                <p class="card-text">{{key.key}}</p>
+                <p class="card-text blockquote-footer">{{key.created_at}} | {{key.expiry_date}}</p>
+                {% empty %}
+                <p>No item...</p>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="card mx-5 my-3">
+            <div class="card-header" style="color: rgb(179, 28, 28);">
+                Epired keys
+            </div>
+            <div class="card-body p-2 m-2">
+                {% for key in expired_keys %}
+                <p class="card-text">{{key.key}}</p>
+                <p class="card-text blockquote-footer">{{key.created_at}} | {{key.expiry_date}}</p>
+                {% empty %}
+                <p>No item...</p>
+                {% endfor %}
+            </div>
+        </div>
+
+    </main>
+    {% endif %}
+</main>
+{% endblock content %}
