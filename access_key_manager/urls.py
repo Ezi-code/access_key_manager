@@ -37,4 +37,5 @@ urlpatterns = [
         ),
         name="password_reset_complete",
     ),
+    path("verification/", include("verify_email.urls")),
 ] + staticfiles_urlpatterns()

@@ -32,7 +32,8 @@ class User(AbstractUser):
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
-    is_registration_complete = models.BooleanField(default=False)
+    password = models.CharField(max_length=128)
+
 
     USERNAME_FIELD = "email"
     EMAIL_FIELD = "email"

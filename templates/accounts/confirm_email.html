@@ -10,7 +10,7 @@ Confirm email
 
 {% block content %}
 <main class="card mx-5 my-2 p-4">
-    <form class="form" action="{% url 'accounts:confirm_email' user_id %}" method="post">
+    <form class="form" action="{% url 'accounts:confirm_email' user %}" method="post">
         {% csrf_token %}
         <p>Please enter the confirmation code sent to your email to confirm your email. <br>This step is required for
             your accounts to be activated.</p>

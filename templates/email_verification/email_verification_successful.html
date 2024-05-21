@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block title %}
+Verification successful
+{% endblock title %}
+
+{% block content %}
+<main class="mx-5 my-3 p-2">
+    <center>
+        <h3>Accounts Verification successful</h3>
+        <p>
+            {{msg}}
+        </p>
+        <a href="{{link}}" class="btn btn-primary">Login</a>
+    </center>
+</main>
+{% endblock content %}

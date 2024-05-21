@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block title %}
+Reset password
+{% endblock title %}
+
+{% block content %}
+<main class="mx-5 my-3 p-2">
+    <form action="" method="post">
+        {% csrf_token %}
+        <div class="card">
+            <div class="card-header">
+                <b>Email Verification</b>
+            </div>
+
+            <div class="card-body">
+                <p class="card-text">
+                    Request new email for verification.
+                </p>
+                <p>
+                    <input type="email" name="email" id="email" placeholder="Email" required class="form-control"
+                        style="width: 15rem;">
+                </p>
+                <p>
+                    <button class="btn-primary btn-sm" type="submit">Submit</button>
+                </p>
+            </div>
+        </div>
+    </form>
+</main>
+{% endblock content %}

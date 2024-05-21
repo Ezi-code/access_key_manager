@@ -10,7 +10,7 @@ Login
 
 {% block content %}
 <main>
-    <form class="from mx-5 my-2 p-2" method="post" action="{% url 'accounts:login_view' %}" class="text-center form">
+    <form class="from mx-5 my-2 p-2" method="post" action="{% url 'accounts:login_page' %}" class="text-center form">
         {% csrf_token %}
         <p>
             <input class="form-control" style="width: 15rem;" type="email" placeholder="example@mail.com" required

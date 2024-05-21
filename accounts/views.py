@@ -1,29 +1,31 @@
 from django.shortcuts import render, redirect
 from django.views.generic import View
-from accounts.models import EmailToken, User
+from accounts.models import EmailToken
 from django.contrib import messages
 from django.contrib.auth import login, logout, authenticate
-from accounts.services import send_confirmation_code
 from django.contrib.auth.mixins import LoginRequiredMixin
+from verify_email.email_handler import send_verification_email
+from accounts.forms import RegistrationForm
 
 
 class LoginView(View):
     def get(self, request):
+        logout(request)
         return render(request, "accounts/login_form.html")
-    
+
     def post(self, request):
         username = request.POST["username"]
         password = request.POST["password"]
         user = authenticate(username=username, password=password)
         if user is not None:
             try:
-                if user.is_registration_complete:
+                if user.is_active:
                     login(request, user)
                     messages.success(request, "Login Successful")
                     return redirect("main:home")
                 else:
                     messages.error(request, "User registration incomplete!")
-                    redirect("accounts:confirm_email", user.id)
+                    redirect("request-new-link-from-email")
             except Exception as e:
                 messages.error(request, f"{e}")
         messages.error(request, "Invalid user credentials!")
@@ -32,53 +34,41 @@ class LoginView(View):
 
 class RegisterView(View):
     def get(self, request):
-        return render(request, "accounts/register_form.html")
+        form = RegistrationForm()
+        return render(request, "accounts/register_form.html", {"form": form})
 
     def post(self, request):
-        username = request.POST["username"]
-        email = request.POST["email"]
-        password = request.POST["password"]
-        password1 = request.POST["password1"]
-        if password == password1:
-            new_user = User.objects.create_user(
-                email=email, username=username, password=password
-            )
-            new_user.full_clean()
-            new_user.save()
-            send_confirmation_code(new_user)
-            return redirect("accounts:confirm_email", new_user.id)
-        else:
-            messages.error(request, "Passwords do not match!")
-        return render(request, "accounts/register_form.html")
+        form = RegistrationForm(request.POST)
+        try:
+            if form.is_valid():
+                try:
+                    form.clean_passwords()
+                    print("passed1")
+                    form.save()
+                    print("passed2")
+                    send_verification_email(request, form)
+                    print("passed3")
+                    return redirect("accounts:login_page")
 
-
-class ConfirmEmailView(View):
-
-    def get(self, request, uuid):
-        email = User.objects.get(id=uuid).email
-        user_id = User.objects.get(id=uuid).id
-        ctx = {"email": email, "user_id": user_id}
-        return render(request, "accounts/confirm_email.html", ctx)
-
-    def post(self, request, uuid):
-        user = User.objects.get(id=uuid)
-        code = int(request.POST["code"])
-        verification_code = EmailToken.objects.get(user=user).code
-        if code == verification_code:
-            user.is_registration_complete = True
-            user.clean()
-            user.save()
-            messages.success(request, "Email Verified Successfully")
-            return redirect("accounts:login_view")
-
-        messages.error(request, "Invalid Verification Code")
-        return render(request, "accounts/confirm_email.html", {"user_id": user.id})
+                except Exception as e:
+                    messages.error(
+                        request,
+                        str(e).strip(
+                            "[]''",
+                        ),
+                    )
+                    return redirect("accounts:review_view")
+            else:
+                messages.error(request, "Invalid form credentials")
+        except Exception as e:
+            messages.error(request, str(e))
+        return redirect("accounts:register_view")
 
 
 class LogoutView(View, LoginRequiredMixin):
-    redirect_field_name = "accounts:login_view"
+    redirect_field_name = "accounts:login_page"
 
     def get(self, request):
         logout(request)
         messages.success(request, "Logout Successful")
-        return redirect("accounts:login_view")
+        return redirect("accounts:login_page")

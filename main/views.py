@@ -2,7 +2,7 @@ from django.shortcuts import redirect, render
 from django.views.generic import View
 from accounts.models import User
 from main.models import AccessKey, KeyToken
-from main.services import SendMail, LoginMixin
+from main.services import LoginMixin, send_key_token
 from django.contrib import messages
 
 
@@ -26,7 +26,7 @@ class HomeView(LoginMixin, View):
 class RequestKeyView(LoginMixin, View):
     def get(self, request, uuid):
         user = User.objects.get(id=uuid)
-        SendMail.send_key_token(user)
+        send_key_token(user=user)
         ctx = {
             "user": user,
         }
@@ -34,17 +34,22 @@ class RequestKeyView(LoginMixin, View):
 
     def post(self, request, uuid):
         user = User.objects.get(id=uuid)
+        print(user)
         token = request.POST["token"]
+        print(token)
         acces_token = KeyToken.objects.get(key=token)
+        print(acces_token.user)
         if acces_token.user == user:
             keys = AccessKey.objects.filter(user=user)
+            print(keys)
             for key in keys:
                 if key.status == "ACTIVE":
                     messages.error(request, "Current key is not expired yet!")
                     return redirect("main:home")
-                else:
-                    new_key = AccessKey.objects.create(user=user)
-                    new_key.clean()
-                    new_key.save()
-                    return redirect("main:home")
+
+            new_key = AccessKey.objects.create(user=user)
+            new_key.clean()
+            new_key.save()
+            return redirect("main:home")
+        messages.error(request, "an error occured")
         return render(request, "main/request_key.html", {"user": user})

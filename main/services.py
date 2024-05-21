@@ -8,31 +8,29 @@ from django.utils import timezone
 
 
 # SEND KEY TOKEN TO USER
-class SendMail:
-    def send_key_token(user):
-        token_instance = KeyToken.objects.create(user=user)
-        message = f"""Hi {user.username},
-            Your Access Key Generation token is {token_instance.key}.
-            Please verify to generate a new Access Token for your system to continue usage.
-            Thank you.
-        """
-        mail = EmailMessage(
-            to=[user.email],
-            body=message,
-            reply_to=[settings.EMAIL_HOST_USER],
-            from_email=settings.EMAIL_HOST_USER,
-            subject="Verify Access Key Token",
-        )
-        mail.send(fail_silently=False)
-        return True
 
 
-send_mail = EmailMessage()
+def send_key_token(user):
+    token_instance = KeyToken.objects.create(user=user)
+    message = f"""Hi {user.username},
+        Your Access Key Generation token is {token_instance.key}.
+        Please verify to generate a new Access Token for your system to continue usage.
+        Thank you.
+    """
+    mail = EmailMessage(
+        to=[user.email],
+        body=message,
+        reply_to=[settings.EMAIL_HOST_USER],
+        from_email=settings.EMAIL_HOST_USER,
+        subject="Verify Access Key Token",
+    )
+    mail.send(fail_silently=False)
+    return True
 
 
 class LoginMixin(LoginRequiredMixin):
     def get_login_url(self):
-        return reverse_lazy("accounts:login_view")
+        return reverse_lazy("accounts:login_page")
 
 
 def check_expiry():
@@ -44,4 +42,4 @@ def check_expiry():
                 key.status = AccessKey.KeyStatus.EXPIRED
                 key.save(update_fields=["status"])
                 return True
-        time.sleep(86400)
+        time.sleep(60)

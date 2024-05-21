@@ -13,10 +13,10 @@ Request Key
     <form class="form text-center m-5" action="{% url 'main:request_key' user.id %}" method="post">
         {% csrf_token %}
         <p>
-            Please enter the key token sent to your email ({{user.email}}) to generate a new Access Key.
+            Please enter the key token sent to your email <bold>{{user.email}}</bold> to generate a new Access Key.
         </p>
         <p>
-            <input type="text" name="token" placeholder="Email" autocomplete="on" required class="form-control m">
+            <input type="text" name="token" placeholder="Key Token" autocomplete="on" required class="form-control m">
         </p>
         <input type="submit" value="Request Key" class="btn btn-primary btn-sm">
     </form>
