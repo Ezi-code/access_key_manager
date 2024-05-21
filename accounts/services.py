@@ -1,6 +1,9 @@
 from django.core.mail import EmailMessage
 from accounts.models import EmailToken
 from django.conf import settings
+from django.contrib.auth import login, authenticate
+from django.shortcuts import redirect
+
 
 # SEND CONFIRMATION CODE TO USER
 def send_confirmation_code(user):

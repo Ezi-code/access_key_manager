@@ -43,20 +43,12 @@ class RegisterView(View):
             if form.is_valid():
                 try:
                     form.clean_passwords()
-                    print("passed1")
                     form.save()
-                    print("passed2")
                     send_verification_email(request, form)
-                    print("passed3")
                     return redirect("accounts:login_page")
 
                 except Exception as e:
-                    messages.error(
-                        request,
-                        str(e).strip(
-                            "[]''",
-                        ),
-                    )
+                    messages.error(request, str(e).strip("[]''"))
                     return redirect("accounts:review_view")
             else:
                 messages.error(request, "Invalid form credentials")
