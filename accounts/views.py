@@ -34,6 +34,7 @@ class LoginView(View):
 
 class RegisterView(View):
     def get(self, request):
+        logout(request)
         form = RegistrationForm()
         return render(request, "accounts/register_form.html", {"form": form})
 
@@ -45,6 +46,10 @@ class RegisterView(View):
                     form.clean_passwords()
                     form.save()
                     send_verification_email(request, form)
+                    messages.success(
+                        request,
+                        "A verification email has been sent to your email address",
+                    )
                     return redirect("accounts:login_page")
 
                 except Exception as e:

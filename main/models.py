@@ -45,6 +45,11 @@ class KeyTokenManager(models.Manager):
 
 # KEYTOKENS TO BE SENT TO USERS FOR GENERATING ACCESS KEYS
 class KeyToken(models.Model):
+
+    class Status(models.TextChoices):
+        ACTIVE = ("ACTIVE", "Active")
+        EXPIRED = ("EXPIRED", "Expired")
+
     key = models.CharField(
         blank=True,
         null=True,
@@ -54,5 +59,8 @@ class KeyToken(models.Model):
     )
     created_at = models.DateTimeField(default=timezone.now)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
+    status = models.CharField(
+        max_length=10, default=Status.ACTIVE, choices=Status.choices
+    )
 
     objects = KeyTokenManager()

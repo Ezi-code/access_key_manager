@@ -33,15 +33,21 @@ class RequestKeyView(LoginMixin, View):
         return render(request, "main/request_key.html", ctx)
 
     def post(self, request, uuid):
-        user = User.objects.get(id=uuid)
-        print(user)
-        token = request.POST["token"]
-        print(token)
-        acces_token = KeyToken.objects.get(key=token)
-        print(acces_token.user)
-        if acces_token.user == user:
+
+        token = request.POST["token"].strip(" ")
+
+        try:
+            user = User.objects.get(id=uuid)
+            acces_token = KeyToken.objects.get(key=token)
+            if acces_token.status == "EXPIRED":
+                messages.error(request, "Token has expired!")
+                return render(request, "main/request_key.html", {"user": user})
+
+        except Exception as e:
+            messages.error(request, f"{e}")
+            return render(request, "main/request_key.html", {"user": user})
+        if acces_token.user == user and acces_token:
             keys = AccessKey.objects.filter(user=user)
-            print(keys)
             for key in keys:
                 if key.status == "ACTIVE":
                     messages.error(request, "Current key is not expired yet!")
@@ -50,6 +56,8 @@ class RequestKeyView(LoginMixin, View):
             new_key = AccessKey.objects.create(user=user)
             new_key.clean()
             new_key.save()
+            acces_token.status = "EXPIRED"
+            acces_token.save()
             return redirect("main:home")
         messages.error(request, "an error occured")
         return render(request, "main/request_key.html", {"user": user})
