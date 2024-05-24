@@ -8,9 +8,13 @@ from django.contrib import messages
 
 class HomeView(LoginMixin, View):
     def get(self, request):
+        # GET ACTIVE, REVOKED AND EXPIRED KEYS
+        # AccessKey.check_expiry(self)
+
         active_keys = AccessKey.objects.filter(user=request.user, status="ACTIVE")
         revoked_keys = AccessKey.objects.filter(user=request.user, status="REVOKED")
         expired_keys = AccessKey.objects.filter(user=request.user, status="EXPIRED")
+
         ctx = {
             "active_keys": active_keys,
             "revoked_keys": revoked_keys,
@@ -36,6 +40,7 @@ class RequestKeyView(LoginMixin, View):
 
         token = request.POST["token"].strip(" ")
 
+        # CHECK IF TOKEN AND USER EXISTS
         try:
             user = User.objects.get(id=uuid)
             acces_token = KeyToken.objects.get(key=token)
@@ -46,16 +51,22 @@ class RequestKeyView(LoginMixin, View):
         except Exception as e:
             messages.error(request, f"{e}")
             return render(request, "main/request_key.html", {"user": user})
-        if acces_token.user == user and acces_token:
+
+        # CHECK IF TOKEN BELONGS TO USER
+        if acces_token.user == user:
             keys = AccessKey.objects.filter(user=user)
             for key in keys:
+                # CHECK IF CURRENT KEY IS ACTIVE
                 if key.status == "ACTIVE":
                     messages.error(request, "Current key is not expired yet!")
                     return redirect("main:home")
 
+            # CREATE NEW KEY
             new_key = AccessKey.objects.create(user=user)
             new_key.clean()
             new_key.save()
+
+            # SET TOKEN STATUS TO EXPIRED
             acces_token.status = "EXPIRED"
             acces_token.save()
             return redirect("main:home")

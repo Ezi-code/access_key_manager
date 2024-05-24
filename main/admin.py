@@ -3,7 +3,7 @@ from main.models import AccessKey, KeyToken
 
 
 class AccessKeyAdmin(admin.ModelAdmin):
-    list_display = ["user", "status", "created_at"]
+    list_display = ["user", "status", "expiry_date", "created_at"]
     search_fields = ["user", "status"]
     list_filter = ["status"]
 

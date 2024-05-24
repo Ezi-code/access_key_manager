@@ -1,6 +1,5 @@
 from django.shortcuts import render, redirect
 from django.views.generic import View
-from accounts.models import EmailToken
 from django.contrib import messages
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -62,8 +61,9 @@ class RegisterView(View):
         return redirect("accounts:register_view")
 
 
-class LogoutView(View, LoginRequiredMixin):
-    redirect_field_name = "accounts:login_page"
+class LogoutView(LoginRequiredMixin, View):
+    login_url = "accounts:login_page"
+    redirect_field_name = "login_page"
 
     def get(self, request):
         logout(request)

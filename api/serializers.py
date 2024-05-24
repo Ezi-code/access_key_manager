@@ -3,6 +3,7 @@ from main.models import AccessKey
 
 
 class AccessKeySerializer(serializers.ModelSerializer):
+
     class Meta:
         model = AccessKey
-        fields = "__all__"
+        fields = ["user", "key", "status", "expiry_date", "created_at"]

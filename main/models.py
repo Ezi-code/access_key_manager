@@ -2,7 +2,7 @@ from datetime import timedelta
 from django.db import models
 from django.dispatch import receiver
 from accounts.models import User
-from django.db.models.signals import pre_save, post_save
+from django.db.models.signals import pre_save
 import uuid, random
 from django.utils import timezone
 from django.utils import timezone
@@ -24,12 +24,18 @@ class AccessKey(models.Model):
         max_length=10, choices=KeyStatus.choices, default=KeyStatus.ACTIVE
     )
 
+    def check_expiry(self):
+        for key in AccessKey.objects.all():
+            if key.expiry_date < timezone.now():
+                key.status = AccessKey.KeyStatus.EXPIRED
+                key.save()
+
 
 # SET EXPIRY DATE AND KEY ON SAVE
 @receiver(pre_save, sender=AccessKey)
 def save_key_data(sender, instance, *args, **kwargs):
     if instance:
-        instance.expiry_date = timezone.now() + timedelta(days=90)
+        instance.expiry_date = timezone.now() + timedelta(seconds=5)
         instance.key = uuid.uuid4()
 
 

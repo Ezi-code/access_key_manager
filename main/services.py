@@ -31,15 +31,3 @@ def send_key_token(user):
 class LoginMixin(LoginRequiredMixin):
     def get_login_url(self):
         return reverse_lazy("accounts:login_page")
-
-
-def check_expiry():
-    access_keys = AccessKey.objects.all()
-    now = timezone.now()
-    while True:
-        for key in access_keys:
-            if key.expiry_date < now:
-                key.status = AccessKey.KeyStatus.EXPIRED
-                key.save(update_fields=["status"])
-                return True
-        time.sleep(60)
