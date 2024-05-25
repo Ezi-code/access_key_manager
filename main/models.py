@@ -29,6 +29,8 @@ class AccessKey(models.Model):
             if key.expiry_date < timezone.now():
                 key.status = AccessKey.KeyStatus.EXPIRED
                 key.save()
+                
+                return key
 
 
 # SET EXPIRY DATE AND KEY ON SAVE
