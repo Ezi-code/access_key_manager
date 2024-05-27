@@ -45,20 +45,3 @@ class User(AbstractUser):
         return self.email
 
 
-# MANAGER TO CREATE EMAIL TOKEN
-class EmailTokenManager(models.Manager):
-    def create(self, **kwargs):
-        code = random.randrange(1000, 10000)
-        instance = self.model(code=code, **kwargs)
-        instance.save()
-        return instance
-
-
-# EMAILTOKENS TO BE SENT TO USERS FOR EMAIL VERIFICATION
-class EmailToken(models.Model):
-    code = models.IntegerField(null=True, blank=True, unique=True)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    created_at = models.DateTimeField(default=timezone.now)
-
-    objects = EmailTokenManager()
-
