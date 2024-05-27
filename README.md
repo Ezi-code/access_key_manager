@@ -8,6 +8,7 @@ This project aims to develop a web application, Access Key Manager, for Micro-Fo
 - **Database: postgresql(for deployment), Sqlite3(for development)**
 - **Version: Control: Git**
 - **Deployment Platform: render.com**
+- **Deployed Link:**`https://access-key-manager.onrender.com/`
 
 
 
